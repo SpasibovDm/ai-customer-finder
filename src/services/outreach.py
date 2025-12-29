@@ -1,38 +1,53 @@
-def build_outreach_en(req) -> str:
-    tone = req.tone
-    product = req.product
-    positioning = req.positioning or "high-quality"
-    production = req.production_type or "custom branding available"
+from typing import List
+from src.models import AnalyzeRequest, OutreachMessage
 
-    subject = "Custom-branded backpacks for corporate use"
-    opener = "Hello Mr./Ms. <Name>,"
-    if tone == "friendly":
-        opener = "Hi <Name>,"
-        subject = "Quick question about custom backpacks"
-    elif tone == "direct":
-        opener = "Hello <Name>,"
-        subject = "Backpack manufacturing (custom branding) — 15 min?"
-
-    return f"""## Outreach messages (EN)
-
-### B2B cold email (tone: {tone})
-**Subject:** {subject}
-
-{opener}
-
-We are a {positioning} {product} supplier ({production}).
-Many companies choose backpacks as a practical alternative to traditional giveaways — useful for employees and customers.
-
-Would you like a short overview with examples and pricing options?
-
-Best regards,  
-<Your Name>
-
-### Follow-up (Day 4)
-Hi <Name>,  
-just following up — would a 10–15 minute call be useful? I can share examples and typical price ranges.
-
-### Final follow-up (Day 10)
-Hi <Name>,  
-last quick message from my side. If backpacks are relevant for your upcoming campaigns, I can share a short product overview and MOQ options.
-"""
+def build_outreach_en(req: AnalyzeRequest) -> List[OutreachMessage]:
+    return [
+        OutreachMessage(
+            channel="email",
+            subject=f"Backpacks for {req.positioning} — quick question",
+            message=(
+                f"Hi {{Name}},\n\n"
+                f"I'm reaching out because we manufacture backpacks with {req.positioning} "
+                f"and can do custom branding.\n\n"
+                f"Is your team currently sourcing backpacks for promotions, employee kits, or resale?\n"
+                f"If yes, I can share a short catalog + pricing.\n\n"
+                f"Best,\n{{Your Name}}"
+            ),
+            followups=[
+                "Hi {Name}, quick follow-up — happy to send a 1-page overview + pricing tiers. Interested?",
+                "Last note — should I speak with someone else on your team about sourcing backpacks?"
+            ],
+        ),
+        OutreachMessage(
+            channel="linkedin_dm",
+            message=(
+                "Hi {Name} — quick one: we manufacture backpacks (custom branding possible). "
+                "Are you the right person for sourcing promotional merchandise / employee gifts?"
+            ),
+            followups=[
+                "Thanks! If helpful, I can send a short catalog + typical MOQs.",
+            ],
+        ),
+        OutreachMessage(
+            channel="instagram_dm",
+            message=(
+                "Hi! We manufacture backpacks and can do custom branding. "
+                "Do you collaborate with suppliers for your shop/brand? "
+                "I can share examples + MOQ/pricing."
+            ),
+            followups=[
+                "Just checking if you saw my message — want me to send a few sample designs?"
+            ],
+        ),
+        OutreachMessage(
+            channel="marketplace_message",
+            message=(
+                "Hello! We manufacture backpacks (private label/custom branding). "
+                "If you’re looking for a reliable supplier, I can share MOQ, lead times, and a quick catalog."
+            ),
+            followups=[
+                "Can I send you our standard MOQ/lead time + 3 best-selling models?"
+            ],
+        ),
+    ]
