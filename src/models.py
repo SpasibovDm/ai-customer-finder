@@ -1,17 +1,47 @@
-from pydantic import BaseModel, Field
-from typing import Literal, Optional
+from pydantic import BaseModel
+from typing import List, Optional, Literal
+
+class ICPItem(BaseModel):
+    segment: str
+    why_fit: str
+    buyer_titles: List[str]
+    examples: List[str]
+
+class ChannelItem(BaseModel):
+    channel: str                    # e.g. "Google", "LinkedIn", "Amazon"
+    where: List[str]                # конкретные площадки/места
+    search_queries: List[str]       # готовые поисковые запросы
+
+OutreachChannel = Literal[
+    "email",
+    "linkedin_dm",
+    "instagram_dm",
+    "marketplace_message",
+    "whatsapp"
+]
+
+class OutreachMessage(BaseModel):
+    channel: OutreachChannel
+    subject: Optional[str] = None
+    message: str
+    followups: List[str] = []
+
+class PlanStep(BaseModel):
+    timeframe: str   # "Day 1", "Week 1"
+    action: str
+    outcome: str
 
 class AnalyzeRequest(BaseModel):
-    product: str = Field(..., examples=["Backpacks (manufacturer)"])
-    positioning: Optional[str] = Field(None, examples=["Mid to premium quality"])
-    region: str = Field(..., examples=["Europe", "Germany"])
-    sales_focus: Literal["B2B", "B2C", "B2B+B2C"] = "B2B+B2C"
-    production_type: Optional[str] = Field(None, examples=["Own manufacturing, custom branding possible"])
-    language: Literal["EN", "DE"] = "EN"
-    tone: Literal["formal", "friendly", "direct"] = "formal"
+    product: str
+    positioning: str
+    region: str
+    sales_focus: str
+    production_type: str
+    language: str = "EN"
+    tone: str = "formal"
 
 class AnalyzeResponse(BaseModel):
-    icp: str
-    channels: str
-    outreach_messages: str
-    outreach_plan: str
+    icp: List[ICPItem]
+    channels: List[ChannelItem]
+    outreach: List[OutreachMessage]   # <-- ВОТ КЛЮЧЕВОЕ
+    plan: List[PlanStep]
