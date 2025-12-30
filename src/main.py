@@ -1,3 +1,4 @@
+#from src.demo_page import router as demo_router
 from fastapi import FastAPI
 from dotenv import load_dotenv
 
@@ -10,6 +11,7 @@ from src.services.plan import build_plan_en
 load_dotenv()
 
 app = FastAPI(title="AI Customer Finder & Outreach Assistant", version="0.1.0")
+#app.include_router(demo_router)
 
 # ❌ УБРАТЬ ЭТИ СТРОКИ
 # from src.demo_page import router as demo_router
